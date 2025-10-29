@@ -19,7 +19,7 @@ namespace CursoInfoeste.Controllers
         [HttpGet("{number}")]
         public async Task<IActionResult> GetByNumber(int number, CancellationToken cancellationToken)
         {
-            var cashRegister = await _service.GetByNumber(TenantId, number, cancellationToken);
+            var cashRegister = await _service.GetByNumber(number, cancellationToken);
             if (cashRegister == null)
             {
                 return NotFound();

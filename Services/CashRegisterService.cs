@@ -10,17 +10,20 @@ namespace CursoInfoeste.Services
     {
         private readonly ICashRegisterRepository _repository;
 
-        public CashRegisterService(ICashRegisterRepository repository)
+        private readonly Persistencia persistencia;
+
+        public CashRegisterService(ICashRegisterRepository repository, Persistencia persistencia)
         {
             _repository = repository;
+            this.persistencia = persistencia;
         }
 
-        public async Task<CashRegisterResponse> Create(int tenantId, CreateCashRegisterRequest request, CancellationToken cancellationToken)
+        public async Task<CashRegisterResponse> Create(CreateCashRegisterRequest request, CancellationToken cancellationToken)
         {
             var cashRegister = new CashRegister
             {
                 Number = request.Number,
-                TenantId = tenantId,
+                TenantId = persistencia.TenantId,
                 IsOpen = false
             };
             var newCashRegister = await _repository.Insert(cashRegister, cancellationToken);
@@ -33,9 +36,9 @@ namespace CursoInfoeste.Services
             };
         }
 
-        public async Task<CashRegisterResponse> GetByNumber(int tenantId, int number, CancellationToken cancellationToken)
+        public async Task<CashRegisterResponse> GetByNumber( int number, CancellationToken cancellationToken)
         {
-            var cashRegister = await _repository.GetByNumberAsync(tenantId ,number, cancellationToken);
+            var cashRegister = await _repository.GetByNumberAsync(persistencia.TenantId, number, cancellationToken);
             if (cashRegister == null)
             {
                 return null;
@@ -49,9 +52,9 @@ namespace CursoInfoeste.Services
             };
         }
 
-        public async Task<bool> Open(int tenantId, int number, CancellationToken cancellationToken)
+        public async Task<bool> Open( int number, CancellationToken cancellationToken)
         {
-            var cashRegister = await _repository.GetByNumberAsync(tenantId,number, cancellationToken);
+            var cashRegister = await _repository.GetByNumberAsync(persistencia.TenantId, number, cancellationToken);
             if (cashRegister == null || cashRegister.IsOpen)
             {
                 return false;
@@ -62,9 +65,9 @@ namespace CursoInfoeste.Services
             return true;
         }
 
-        public async Task<bool> Close(int tenantId, int number, CancellationToken cancellationToken)
+        public async Task<bool> Close( int number, CancellationToken cancellationToken)
         {
-            var cashRegister = await _repository.GetByNumberAsync(tenantId, number, cancellationToken);
+            var cashRegister = await _repository.GetByNumberAsync(persistencia.TenantId, number, cancellationToken);
             if (cashRegister == null || !cashRegister.IsOpen)
             {
                 return false;
