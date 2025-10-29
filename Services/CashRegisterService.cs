@@ -67,7 +67,7 @@ namespace CursoInfoeste.Services
 
         public async Task<bool> Close( int number, CancellationToken cancellationToken)
         {
-            var cashRegister = await _repository.GetByNumberAsync(persistencia.TenantId, number, cancellationToken);
+            var cashRegister = await _repository.GetByNumberAsync(number, cancellationToken);
             if (cashRegister == null || !cashRegister.IsOpen)
             {
                 return false;
